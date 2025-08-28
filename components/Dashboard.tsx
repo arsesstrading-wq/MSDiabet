@@ -5,12 +5,41 @@ import type { User, View, ModalContent, SummaryTimeFrame, Language } from '../ty
 import {
   BloodDropIcon, MealIcon, ActivityIcon, GraphIcon, CorrectionDoseIcon,
   TargetIcon, SyringeIcon, WheatIcon, FootprintsIcon,
-  MoonIcon, SunIcon, HistoryIcon, ProfileIconGeneric, ClockIcon
+  MoonIcon, SunIcon, HistoryIcon, ProfileIconGeneric, ClockIcon, AlertIcon
 } from './Icons';
 import { getGlucoseColorClass, calculateInsulinFactors, calculateIOB } from '../constants';
 import { GlucosePredictionCard } from './GlucosePredictionCard';
 import type { strings } from '../localization/strings';
 import { toPersianNum, toEnglishNum } from '../utils';
+
+// Header for Dashboard
+const DashboardHeader: React.FC<{ 
+    title: string; 
+    showSpecialConditionIcon: boolean;
+    specialConditionTooltip: string;
+}> = ({ title, showSpecialConditionIcon, specialConditionTooltip }) => {
+  return (
+    <div className="p-4 sm:px-5 lg:px-6 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10 shadow-sm">
+      <div className="w-full flex items-center justify-between">
+        <div className="flex-1 flex justify-start">
+            {/* Empty, for balance */}
+        </div>
+        <div className="flex items-center space-x-2 rtl:space-x-reverse flex-shrink-0 px-2">
+            <h2 className="text-xl font-bold">{title}</h2>
+            {showSpecialConditionIcon && (
+                <div title={specialConditionTooltip}>
+                    <AlertIcon />
+                </div>
+            )}
+        </div>
+        <div className="flex-1 flex justify-end">
+            {/* Empty, for balance. Settings button moved to Profile screen. */}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 // Card for top stats (ICR, ISF, BMI)
 const StatCard: React.FC<{ label: string; value: string; onClick: () => void }> = ({ label, value, onClick }) => (
@@ -46,9 +75,11 @@ interface DashboardProps {
   onStartComparison: (predictedValue: number) => void;
   t: (key: keyof typeof strings.fa) => string;
   language: Language;
+  showSpecialConditionIcon: boolean;
+  specialConditionTooltip: string;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ currentUser, setView, setModalContent, summaryTimeFrame, isAiEnabled, isEstimating, lastPrediction, lastComparison, onEstimate, onStartComparison, t, language }) => {
+const Dashboard: React.FC<DashboardProps> = ({ currentUser, setView, setModalContent, summaryTimeFrame, isAiEnabled, isEstimating, lastPrediction, lastComparison, onEstimate, onStartComparison, t, language, showSpecialConditionIcon, specialConditionTooltip }) => {
   
   // For Summary - uses the selected time frame
   const getStartDate = (timeFrame: SummaryTimeFrame): Date => {
@@ -288,45 +319,52 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, setView, setModalCon
   const canEstimate = currentUser.logs.some(log => log.type === 'bloodSugar' && log.glucose && log.timestamp >= fourHoursAgo);
 
   return (
-    <div className="p-4 flex-grow grid grid-cols-2 md:grid-cols-4 auto-rows-fr gap-4 overflow-y-auto bg-gray-50 dark:bg-gray-900 pb-24">
-      {isAiEnabled && (
-        <div className="col-span-2 row-span-2">
-          <GlucosePredictionCard 
-            isEstimating={isEstimating}
-            lastPrediction={lastPrediction}
-            lastComparison={lastComparison}
-            onEstimate={onEstimate}
-            onStartComparison={onStartComparison}
-            canEstimate={canEstimate}
-            t={t}
-            language={language}
-            setModalContent={setModalContent}
+    <div className="flex flex-col h-full">
+      <DashboardHeader 
+        title={t('appName')} 
+        showSpecialConditionIcon={showSpecialConditionIcon} 
+        specialConditionTooltip={specialConditionTooltip} 
+      />
+      <div className="p-4 flex-grow grid grid-cols-2 md:grid-cols-4 auto-rows-fr gap-4 overflow-y-auto bg-gray-50 dark:bg-gray-900 pb-24">
+        {isAiEnabled && (
+          <div className="col-span-2 row-span-2">
+            <GlucosePredictionCard 
+              isEstimating={isEstimating}
+              lastPrediction={lastPrediction}
+              lastComparison={lastComparison}
+              onEstimate={onEstimate}
+              onStartComparison={onStartComparison}
+              canEstimate={canEstimate}
+              t={t}
+              language={language}
+              setModalContent={setModalContent}
+            />
+          </div>
+        )}
+        
+        <StatCard label="ICR" value={icrString} onClick={() => handleCardClick('icr')} />
+        <StatCard label="ISF" value={isfString} onClick={() => handleCardClick('isf')} />
+        <StatCard label="BMI" value={bmiString} onClick={() => handleCardClick('bmi')} />
+        <StatCard label="FF" value={ffString} onClick={() => handleCardClick('ff')} />
+        <StatCard label="A1C" value={estimatedA1CString} onClick={() => handleCardClick('a1c')} />
+        <StatCard label="TDD" value={toPersianNum(totalDailyInsulin > 0 ? totalDailyInsulin.toFixed(1) : '—', language)} onClick={() => handleCardClick('tdd')} />
+        
+        <SummaryStatCard label={t('avgGlucose')} value={avgBloodSugarValue} unit="mg/dL" icon={<TargetIcon className="h-5 w-5" />} />
+        <SummaryStatCard label={t('totalInsulin')} value={toPersianNum(totalInsulin.toFixed(1), language)} unit={t('unit')} icon={<SyringeIcon className="h-5 w-5" />} />
+        <SummaryStatCard label={t('totalCarbs')} value={toPersianNum(String(totalCarbs), language)} unit={t('gram')} icon={<WheatIcon className="h-5 w-5" />} />
+        <SummaryStatCard label={t('totalActivity')} value={toPersianNum(String(totalActivity), language)} unit={t('minute')} icon={<FootprintsIcon className="h-5 w-5" />} />
+        <SummaryStatCard label={t('estimatedBasal')} value={toPersianNum(basal.value > 0 ? basal.value.toFixed(1) : '—', language)} unit={t('unit')} icon={<MoonIcon className="h-5 w-5" />} onClick={() => handleInsulinCardClick('basal')} />
+        <SummaryStatCard label={t('estimatedBolus')} value={toPersianNum(bolus.value > 0 ? bolus.value.toFixed(1) : '—', language)} unit={t('unit')} icon={<SunIcon className="h-5 w-5" />} onClick={() => handleInsulinCardClick('bolus')} />
+        
+        <div className="col-span-2">
+          <SummaryStatCard 
+            label={t('insulinOnBoard')} 
+            value={toPersianNum(iob > 0 ? iob.toFixed(1) : '۰', language)} 
+            unit={t('unit')} 
+            icon={<ClockIcon className="h-5 w-5" />} 
+            onClick={handleIobCardClick} 
           />
         </div>
-      )}
-      
-      <StatCard label="ICR" value={icrString} onClick={() => handleCardClick('icr')} />
-      <StatCard label="ISF" value={isfString} onClick={() => handleCardClick('isf')} />
-      <StatCard label="BMI" value={bmiString} onClick={() => handleCardClick('bmi')} />
-      <StatCard label="FF" value={ffString} onClick={() => handleCardClick('ff')} />
-      <StatCard label="A1C" value={estimatedA1CString} onClick={() => handleCardClick('a1c')} />
-      <StatCard label="TDD" value={toPersianNum(totalDailyInsulin > 0 ? totalDailyInsulin.toFixed(1) : '—', language)} onClick={() => handleCardClick('tdd')} />
-      
-      <SummaryStatCard label={t('avgGlucose')} value={avgBloodSugarValue} unit="mg/dL" icon={<TargetIcon className="h-5 w-5" />} />
-      <SummaryStatCard label={t('totalInsulin')} value={toPersianNum(totalInsulin.toFixed(1), language)} unit={t('unit')} icon={<SyringeIcon className="h-5 w-5" />} />
-      <SummaryStatCard label={t('totalCarbs')} value={toPersianNum(String(totalCarbs), language)} unit={t('gram')} icon={<WheatIcon className="h-5 w-5" />} />
-      <SummaryStatCard label={t('totalActivity')} value={toPersianNum(String(totalActivity), language)} unit={t('minute')} icon={<FootprintsIcon className="h-5 w-5" />} />
-      <SummaryStatCard label={t('estimatedBasal')} value={toPersianNum(basal.value > 0 ? basal.value.toFixed(1) : '—', language)} unit={t('unit')} icon={<MoonIcon className="h-5 w-5" />} onClick={() => handleInsulinCardClick('basal')} />
-      <SummaryStatCard label={t('estimatedBolus')} value={toPersianNum(bolus.value > 0 ? bolus.value.toFixed(1) : '—', language)} unit={t('unit')} icon={<SunIcon className="h-5 w-5" />} onClick={() => handleInsulinCardClick('bolus')} />
-      
-      <div className="col-span-2">
-        <SummaryStatCard 
-          label={t('insulinOnBoard')} 
-          value={toPersianNum(iob > 0 ? iob.toFixed(1) : '۰', language)} 
-          unit={t('unit')} 
-          icon={<ClockIcon className="h-5 w-5" />} 
-          onClick={handleIobCardClick} 
-        />
       </div>
     </div>
   );
