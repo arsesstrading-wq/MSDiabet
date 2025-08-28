@@ -1,0 +1,22 @@
+{
+  "name": "رویای شیرین من",
+  "short_name": "رویای شیرین",
+  "description": "A comprehensive diabetes management application to log blood sugar, meals, and activities, leveraging AI for data analysis and recommendations. The user interface is in Persian.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f3f4f6",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192x192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "icon-512x512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

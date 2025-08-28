@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/icon-192x192.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>رویای شیرین من</title>
+
+    <!-- PWA Tags -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#4f46e5" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="رویای شیرین من" />
+    <link rel="apple-touch-icon" href="/icon-192x192.svg" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Vazirmatn', 'sans-serif'],
+            },
+            colors: {
+              primary: {
+                50: 'rgb(var(--color-primary-50) / <alpha-value>)',
+                100: 'rgb(var(--color-primary-100) / <alpha-value>)',
+                200: 'rgb(var(--color-primary-200) / <alpha-value>)',
+                300: 'rgb(var(--color-primary-300) / <alpha-value>)',
+                400: 'rgb(var(--color-primary-400) / <alpha-value>)',
+                500: 'rgb(var(--color-primary-500) / <alpha-value>)',
+                600: 'rgb(var(--color-primary-600) / <alpha-value>)',
+                700: 'rgb(var(--color-primary-700) / <alpha-value>)',
+                800: 'rgb(var(--color-primary-800) / <alpha-value>)',
+                900: 'rgb(var(--color-primary-900) / <alpha-value>)',
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+    
+    <style>
+      :root {
+        --color-primary-50: 238 242 255;
+        --color-primary-100: 224 231 255;
+        --color-primary-200: 199 210 254;
+        --color-primary-300: 165 180 252;
+        --color-primary-400: 129 140 248;
+        --color-primary-500: 99 102 241;
+        --color-primary-600: 79 70 229;
+        --color-primary-700: 67 56 202;
+        --color-primary-800: 55 48 163;
+        --color-primary-900: 49 46 129;
+        --color-primary-600-val: #4f46e5;
+        --color-primary-400-val: #818cf8;
+      }
+      body {
+        font-family: 'Vazirmatn', sans-serif;
+      }
+      .responsive-calendar .Calendar {
+        width: 100% !important;
+        box-shadow: none;
+        border: 1px solid #ddd;
+      }
+      .dark .responsive-calendar .Calendar {
+        border-color: #4b5563;
+      }
+      /* Date Picker dark mode overrides */
+      .dark .Calendar {
+        background: #1f2937; /* gray-800 */
+        color: #d1d5db; /* gray-300 */
+      }
+      .dark .Calendar__day.-selected, .dark .Calendar__day.-selectedStart, .dark .Calendar__day.-selectedEnd {
+        color: #fff;
+        background: rgb(var(--color-primary-600));
+      }
+      .dark .Calendar__day:not(.-selected):hover {
+        background: #374151; /* gray-700 */
+      }
+      .dark .Calendar__monthText, .dark .Calendar__yearText {
+        color: #d1d5db;
+      }
+      .dark .Calendar__monthArrow, .dark .Calendar__yearArrow {
+        border-color: #9ca3af; /* gray-400 */
+      }
+      .dark .Calendar__monthArrow:hover, .dark .Calendar__yearArrow:hover {
+        border-color: #fff;
+      }
+      .dark .Calendar__weekDay {
+        color: #9ca3af; /* gray-400 */
+      }
+      .dark .Calendar__day.-weekend:not(.-selected) {
+        color: #f87171; /* red-400 */
+      }
+      @keyframes slide-up {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
+      .animate-slide-up {
+        animation: slide-up 0.3s ease-out forwards;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.1.1/",
+    "react": "https://esm.sh/react@^19.1.1",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.1/",
+    "recharts": "https://esm.sh/recharts@^3.1.2",
+    "jspdf": "https://esm.sh/jspdf@2.5.1",
+    "html2canvas": "https://esm.sh/html2canvas@1.4.1",
+    "@google/genai": "https://esm.sh/@google/genai@^1.14.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

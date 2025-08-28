@@ -1,0 +1,7 @@
+{
+  "name": "Copy of Ai Royaye Shirin Diabetes Manager",
+  "description": "A comprehensive diabetes management application to log blood sugar, meals, and activities, leveraging AI for data analysis and recommendations. The user interface is in Persian.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
